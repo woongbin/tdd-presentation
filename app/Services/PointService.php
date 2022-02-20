@@ -8,6 +8,6 @@ class PointService
 {
     public function getPoint(Product $product)
     {
-
+        return 0;
     }
 }
