@@ -103,7 +103,7 @@ class RockPaperScissorsServiceTest extends TestCase
     }
 
     /** @test */
-    public function 보자기는_보자기는_비긴다(): void
+    public function 보자기는_보자기와_비긴다(): void
     {
         $me = RockPaperScissorsService::PAPER;
         $you = RockPaperScissorsService::PAPER;
