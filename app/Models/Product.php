@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Product extends Model
+class Product
 {
-    use HasFactory;
-
-    protected $fillable = ['name', 'price'];
+    public function __construct(
+        public string $name,
+        public int $price
+    ){}
 }

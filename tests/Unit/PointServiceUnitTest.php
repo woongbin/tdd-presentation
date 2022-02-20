@@ -4,10 +4,13 @@ namespace Tests\Unit;
 
 use App\Models\Product;
 use App\Services\PointService;
-use PHPUnit\Framework\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
 
 class PointServiceUnitTest extends TestCase
 {
+    use WithFaker;
+
     private PointService $pointService;
 
     protected function setUp(): void
@@ -20,12 +23,10 @@ class PointServiceUnitTest extends TestCase
     private function getProduct($price = 0): Product
     {
         if ($price > 0) {
-            return Product::factory()->state([
-                'price' => $price
-            ])->make();
+            return new Product($this->faker->name(), $price);
         }
 
-        return Product::factory()->make();
+        return new Product($this->faker->name(), $this->faker->numberBetween(1000, 100000));
     }
 
     /** @test */
