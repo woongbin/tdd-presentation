@@ -6,7 +6,7 @@ use App\Models\Product;
 
 class PointService
 {
-    public function getPoint(Product $product): int
+    public function getPoint(Product $product)
     {
 
     }
