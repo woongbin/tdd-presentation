@@ -20,13 +20,11 @@ class PointServiceUnitTest extends TestCase
         $this->pointService = app(PointService::class);
     }
 
-    private function getProduct($price = 0): Product
+    private function getProduct($price = 0, $pointRate = 0.05): Product
     {
-        if ($price > 0) {
-            return new Product($this->faker->name(), $price);
-        }
+        $price = $price > 0 ? $price : $this->faker->numberBetween(1000, 100000);
 
-        return new Product($this->faker->name(), $this->faker->numberBetween(1000, 100000));
+        return new Product($this->faker->name(), $price, $pointRate);
     }
 
     /** @test */
