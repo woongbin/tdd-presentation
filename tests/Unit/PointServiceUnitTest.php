@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Product;
 use App\Services\PointService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
@@ -32,7 +33,8 @@ class PointServiceUnitTest extends TestCase
     {
         $product = $this->getProduct();
 
-        $result = $this->pointService->getPoint($product);
+        $date = Carbon::create(2022, 2, 23, 5, 0, 0, 'Asia/Seoul');
+        $result = $this->pointService->getPoint($product, $date);
 
         $this->assertNotNull($result);
         $this->assertTrue($result >= 0);
@@ -43,7 +45,8 @@ class PointServiceUnitTest extends TestCase
     {
         $product = $this->getProduct();
 
-        $result = $this->pointService->getPoint($product);
+        $date = Carbon::create(2022, 2, 23, 5, 0, 0, 'Asia/Seoul');
+        $result = $this->pointService->getPoint($product, $date);
 
         $this->assertIsInt($result);
     }
@@ -58,10 +61,52 @@ class PointServiceUnitTest extends TestCase
         $testParameters[] = ['price' => 8300, 'pointRate' => 0.1, 'result' => 830];
         $testParameters[] = ['price' => 8375, 'pointRate' => 0.03, 'result' => 251];
 
+        $date = Carbon::create(2022, 2, 23, 5, 0, 0, 'Asia/Seoul');
         foreach ($testParameters as $parameter) {
             $product = $this->getProduct($parameter['price'], $parameter['pointRate']);
 
-            $result = $this->pointService->getPoint($product);
+            $result = $this->pointService->getPoint($product, $date);
+
+            $this->assertEquals($parameter['result'], $result);
+        }
+    }
+
+    /** @test */
+    public function 포인트는_최대_1000이다(): void
+    {
+        $testParameters = [];
+        $testParameters[] = ['price' => 50000, 'pointRate' => 0.1, 'result' => 1000];
+        $testParameters[] = ['price' => 10000, 'pointRate' => 0.2, 'result' => 1000];
+        $testParameters[] = ['price' => 10000, 'pointRate' => 0.05, 'result' => 500];
+        $testParameters[] = ['price' => 10000, 'pointRate' => 0.07, 'result' => 700];
+        $testParameters[] = ['price' => 8300, 'pointRate' => 0.1, 'result' => 830];
+        $testParameters[] = ['price' => 8375, 'pointRate' => 0.03, 'result' => 251];
+
+        $date = Carbon::create(2022, 2, 23, 5, 0, 0, 'Asia/Seoul');
+        foreach ($testParameters as $parameter) {
+            $product = $this->getProduct($parameter['price'], $parameter['pointRate']);
+
+            $result = $this->pointService->getPoint($product, $date);
+
+            $this->assertEquals($parameter['result'], $result);
+        }
+    }
+
+    /** @test */
+    public function 이벤트기간에도_포인트는_최대_1000이다(): void
+    {
+        $testParameters = [];
+        $testParameters[] = ['price' => 10000, 'pointRate' => 0.1, 'result' => 1000];
+        $testParameters[] = ['price' => 10000, 'pointRate' => 0.05, 'result' => 1000];
+        $testParameters[] = ['price' => 10000, 'pointRate' => 0.07, 'result' => 1000];
+        $testParameters[] = ['price' => 8300, 'pointRate' => 0.1, 'result' => 1000];
+        $testParameters[] = ['price' => 8375, 'pointRate' => 0.03, 'result' => 502];
+
+        $date = Carbon::create(2022, 3, 15, 5, 0, 0, 'Asia/Seoul');
+        foreach ($testParameters as $parameter) {
+            $product = $this->getProduct($parameter['price'], $parameter['pointRate']);
+
+            $result = $this->pointService->getPoint($product, $date);
 
             $this->assertEquals($parameter['result'], $result);
         }
